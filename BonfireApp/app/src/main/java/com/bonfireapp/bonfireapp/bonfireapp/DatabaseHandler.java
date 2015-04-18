@@ -58,6 +58,101 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
+    /****************************** BEGIN EVENTS METHODS ******************************************/
+    public List<Event> getAllEvents(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<Event> eventList = new ArrayList<Event>();
+        Cursor cursor = db.query(true, TABLE_EVENTS, columnsEvents, null, null, null, null, null, null, null);
 
+        if(cursor.moveToFirst()){
+            do{
+                Event event = new Event();
+                event.setID(cursor.getInt(cursor.getColumnIndex(KEY_ROWID_EVENTS)));
+                event.setName(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
+                event.setDescription(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                event.setAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+                event.setEvent_start(cursor.getString(cursor.getColumnIndex(KEY_EVENT_END)));
+                event.setEvent_end(cursor.getString(cursor.getColumnIndex(KEY_EVENT_START)));
+                event.setCategory(cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+
+                eventList.add(event);
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        return eventList;
+    }
+
+    public long addEvent(Event event) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_EVENT_NAME, event.getName());
+        values.put(KEY_DESCRIPTION, event.getDescription());
+        values.put(KEY_EVENT_START, event.getEvent_end());
+        values.put(KEY_EVENT_END, event.getEvent_start());
+        values.put(KEY_ADDRESS, event.getAddress());
+        values.put(KEY_CATEGORY, event.getCategory());
+
+        long id = db.insert(TABLE_EVENTS, null, values);
+        db.close();
+        return id;
+    }
+
+    public Event getEventsById(int id) throws SQLException {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(true, TABLE_EVENTS, columnsEvents, KEY_ROWID_EVENTS + "=" + id, null, null, null, null, null, null);
+
+        //move to first register of the row
+        if(cursor != null)
+            cursor.moveToFirst();
+        Event event = new Event(cursor.getInt(cursor.getColumnIndex(KEY_ROWID_EVENTS)),
+                cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)),
+                cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)),
+                cursor.getString(cursor.getColumnIndex(KEY_EVENT_END)),
+                cursor.getString(cursor.getColumnIndex(KEY_EVENT_START)),
+                cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+        db.close();
+        return event;
+    }
+
+    public long updateEvent(Event event){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_EVENT_NAME, event.getName());
+        values.put(KEY_DESCRIPTION, event.getDescription());
+        values.put(KEY_EVENT_START, event.getEvent_end());
+        values.put(KEY_EVENT_END, event.getEvent_start());
+        values.put(KEY_ADDRESS, event.getAddress());
+        values.put(KEY_CATEGORY, event.getCategory());
+
+        long result = db.update(TABLE_EVENTS, values, KEY_ROWID_EVENTS+" = ?", new String[]{String.valueOf(event.getID())});
+        db.close();
+        return result;
+    }
+
+    public void deleteEvent(Event event){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EVENTS, KEY_ROWID_EVENTS+" = ? ", new String[]{String.valueOf(event.getID())});
+        db.close();
+    }
+
+
+    public Cursor getMatchingStatesEvent(CharSequence constraint){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor;
+        if (constraint == null  ||  constraint.length () == 0)  {
+            //  Return the full list
+            cursor = db.query(true, TABLE_EVENTS, columnsEvents, null, null, null, null, null, null, null);
+            db.close();
+            return cursor;
+        }  else  {
+            String value = "%"+constraint.toString()+"%";
+            cursor = db.query(TABLE_EVENTS, columnsEvents, "Event like ?", new String[]{value} ,null, null, null);
+            db.close();
+            return cursor;
+        }
+    }
+
+/********************************** END EVENTS METHODS **************************************************************/
 
 }
