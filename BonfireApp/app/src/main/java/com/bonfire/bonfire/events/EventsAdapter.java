@@ -63,23 +63,21 @@ public class EventsAdapter extends ArrayAdapter<Event> {
         viewHolder.date.setText(event.getDate());
         viewHolder.time.setText(event.getTime());
 
-        if (mSelection.get(position) != null)
-            convertView.setBackgroundColor(0x9934B5E4);
-        else
-            convertView.setBackgroundColor(Color.TRANSPARENT);
+
+        if (position % 2 == 1) {
+            convertView.setBackgroundColor(Color.parseColor("#eed061"));
+        } else {
+            convertView.setBackgroundColor(Color.parseColor("#efea84"));
+        }
+
+//        if (mSelection.get(position) != null)
+//            convertView.setBackgroundColor(0x9934B5E4);
+//        else
+//            convertView.setBackgroundColor(Color.TRANSPARENT);
 
 
         return convertView;
     }
-
-	/*@Override
-	public Filter getFilter(){
-
-	    if(filter == null){
-	        filter = new PizzaFilter();
-	    }
-	    return filter;
-	}*/
 
 
     public void removeEvents(){

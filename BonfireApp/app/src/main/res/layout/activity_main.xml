@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:noHistory="true"
-    android:orientation="vertical"
-    android:background="#202020">
+    android:orientation="vertical">
 
     <TabHost
         android:id="@android:id/tabhost"
@@ -24,7 +23,8 @@
                 <TabWidget
                     android:id="@android:id/tabs"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:background="#202020">
                 </TabWidget>
 
             </HorizontalScrollView>
